@@ -63,3 +63,18 @@ struct _auto_deferer_t {
 #define VAR_CAT_(a,b) VAR_CAT(a, b)
 #define defer _auto_deferer_t VAR_CAT_(_res_auto_defer_, __LINE__) = [&]()
 
+namespace utl {
+
+    using string_pair = std::pair<std::string_view, std::string_view>;
+
+    // returns [before, after]
+    constexpr string_pair cut(std::string_view text, std::string_view delim) {
+        auto pos = text.find_first_of(delim);
+        if (pos != std::string_view::npos) {
+            return {text.substr(0, pos), text.substr(pos+1)};
+        } else {
+            return {text, ""sv};
+        }
+    }
+
+}
