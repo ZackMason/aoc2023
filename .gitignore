@@ -31,4 +31,7 @@
 *.out
 *.app
 
+# Input files
+*.txt
+
 fmt

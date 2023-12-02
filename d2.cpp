@@ -68,12 +68,11 @@ int main(int argc, char* argv[]) {
     u64 power = 0;
 
     std::ifstream f{argv[1]};
-    std::string file;
 
     f.seekg(0, std::ios::end);
-    file.reserve(f.tellg());
+    std::string file(f.tellg(), 0);
     f.seekg(0, std::ios::beg);
-    file.assign((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+    f.read(file.data(), file.size());
     
     for (auto [line, file_view] = utl::cut(file, "\n"sv);
         line != ""sv;
