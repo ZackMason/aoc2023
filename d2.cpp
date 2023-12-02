@@ -1,4 +1,5 @@
 #include <utl.hpp>
+#include <execution>
 
 struct game_t {
     u64 id;
@@ -26,14 +27,10 @@ game_t parse_game(std::string_view line) {
     auto parse_result = std::from_chars(start, end, result.id);
     start = parse_result.ptr + 2; // move to first game number
 
-    // fmt::print("Game: {}", result.id);
-
     std::string_view games{start, (size_t)(end - start)};
     u64 game_pos = 0;
-    // fmt::print("{}", games);
 
     while(game_pos < games.size()) {
-        // fmt::print("\t - {}\n", games.substr(game_pos));
         u64 color_value = 0;
         auto r = std::from_chars(games.data() + game_pos, games.data() + games.size(), color_value);
         
@@ -64,8 +61,8 @@ game_t parse_game(std::string_view line) {
 int main(int argc, char* argv[]) {
     if (argc != 2) {return -1;}
 
-    u64 result = 0;
-    u64 power = 0;
+    std::atomic<u64> result = 0;
+    std::atomic<u64> power = 0;
 
     std::ifstream f{argv[1]};
 
@@ -73,17 +70,29 @@ int main(int argc, char* argv[]) {
     std::string file(f.tellg(), 0);
     f.seekg(0, std::ios::beg);
     f.read(file.data(), file.size());
-    
+
+    std::vector<std::string_view> lines;
+    lines.reserve(500'001);
+
     for (auto [line, file_view] = utl::cut(file, "\n"sv);
         line != ""sv;
         std::tie(line, file_view) = utl::cut(file_view, "\n"sv)
     ) {
+        lines.push_back(line);
+    }
+
+    std::for_each(
+        std::execution::par,
+        lines.begin(),
+        lines.end(),
+        [&](auto&& line)
+    {
         auto game = parse_game(line);
         if (game.valid()) {
             result += game.id;
         }
         power += game.power();
-    }
+    });
 
     fmt::print("Part 1: {}\n", result);
     fmt::print("Part 2: {}\n", power);
