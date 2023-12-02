@@ -11,6 +11,8 @@
 #include <string>
 #include <string_view>
 
+#include <immintrin.h>
+
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 #include <fmt/color.h>
@@ -36,3 +38,28 @@ using umm = size_t;
 
 using f32 = float;
 using f64 = double;
+
+struct _auto_deferer_t {
+    std::function<void(void)> fn;
+
+    template<typename Fn>
+    _auto_deferer_t(Fn _fn) 
+        : fn{_fn}
+    {
+    }
+
+    template<typename Fn>
+    _auto_deferer_t& operator=(Fn _fn) {
+        fn = _fn;
+        return *this;
+    }
+
+    ~_auto_deferer_t() {
+        fn();
+    }
+};
+
+#define VAR_CAT(a,b) a ## b
+#define VAR_CAT_(a,b) VAR_CAT(a, b)
+#define defer _auto_deferer_t VAR_CAT_(_res_auto_defer_, __LINE__) = [&]()
+

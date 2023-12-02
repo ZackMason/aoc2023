@@ -1,5 +1,7 @@
 #include <utl.hpp>
 
+#include <Eigen/Core>
+
 constexpr i32 INVALID = -1;
 
 i32 isdigit(char c) {
@@ -26,9 +28,8 @@ i32 read(std::string_view number, i32 index, const char* str, u64 size, i32 dir 
 i32 read_word(i32 index, const char* str, u64 size, i32 dir = 1) {
     i32 result = INVALID;
 
-    #define map(number, _, value) result = read(#number, index, str, size, dir); if (result >= 0) return value;
+    #define map(number, _, value) result = read(#number, index, str, size, dir); if (result >= 0) [[unlikely]] return value;
 
-    map(zero,  ->, 0);
     map(one,   ->, 1);
     map(two,   ->, 2);
     map(three, ->, 3);
