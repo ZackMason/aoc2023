@@ -6,10 +6,6 @@ struct game_t {
     i32 g;
     i32 b;
 
-    i32 mr = 99999;
-    i32 mg = 99999;
-    i32 mb = 99999;
-
     b32 valid() {
         return r <= 12 && g <= 13 && b <= 14;
     }
@@ -64,16 +60,12 @@ game_t parse_game(std::string_view line) {
             // fmt::print("\t\t - {}: {} - {}\n", color, color_value, game);
             if (color == "red"sv) {
                 result.r = std::max(result.r, color_value);
-                result.mr = std::min(result.mr, color_value);
-                // result.r += color_value;
             }
             if (color == "green"sv) {
                 result.g = std::max(result.g, color_value);
-                result.mg = std::min(result.mg, color_value);
             }
             if (color == "blue"sv) {
                 result.b = std::max(result.b, color_value);
-                result.mb = std::min(result.mb, color_value);
             }
 
             if (done) break;
