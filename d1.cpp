@@ -1,7 +1,5 @@
 #include <utl.hpp>
 
-#include <Eigen/Core>
-
 constexpr i32 INVALID = -1;
 
 i32 isdigit(char c) {
